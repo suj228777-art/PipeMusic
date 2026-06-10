@@ -1,89 +1,55 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PipeMusic</title>
-
-```
-<link rel="stylesheet" href="style.css">
-```
-
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
+    <h1>PipeMusic</h1>
 
-```
-<h1>🎵 PipeMusic</h1>
-
-<input
-    type="text"
-    id="search"
-    placeholder="Поиск альбомов и треков..."
->
-```
-
+    <input
+        type="text"
+        id="search"
+        placeholder="Поиск альбомов и треков..."
+    >
 </header>
 
-<main id="content">
-
-</main>
+<div id="content"></div>
 
 <div id="player">
 
-```
-<img
-    id="playerCover"
-    src=""
-    alt="Обложка"
->
+    <img id="playerCover">
 
-<div id="playerInfo">
+    <button onclick="previousTrack()">
+        ⏮
+    </button>
+
+    <button onclick="
+        if(audio.paused)
+            audio.play();
+        else
+            audio.pause();
+    ">
+        ⏯
+    </button>
+
+    <button onclick="nextTrack()">
+        ⏭
+    </button>
 
     <div id="currentTrack">
         Ничего не играет
     </div>
 
-</div>
-
-<div id="playerControls">
-
-    <button
-        id="prevButton"
-        onclick="previousTrack()"
-    >
-        ⏮
-    </button>
-
-    <button
-        id="playPauseButton"
-        onclick="
-            if(audio.paused)
-                audio.play();
-            else
-                audio.pause();
-        "
-    >
-        ⏯
-    </button>
-
-    <button
-        id="nextButton"
-        onclick="nextTrack()"
-    >
-        ⏭
-    </button>
+    <audio
+        id="audio"
+        controls
+    ></audio>
 
 </div>
-
-<audio
-    id="audio"
-    controls
-></audio>
-```
-
 </div>
 
 <script src="script.js"></script>
