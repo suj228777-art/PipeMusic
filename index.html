@@ -26,6 +26,38 @@
     <audio id="audio" controls></audio>
 </div>
 
+<div id="player">
+
+    <img id="playerCover">
+
+    <button onclick="previousTrack()">
+        ⏮
+    </button>
+
+    <button onclick="
+        if(audio.paused)
+            audio.play();
+        else
+            audio.pause();
+    ">
+        ⏯
+    </button>
+
+    <button onclick="nextTrack()">
+        ⏭
+    </button>
+
+    <div id="currentTrack">
+        Ничего не играет
+    </div>
+
+    <audio
+        id="audio"
+        controls
+    ></audio>
+
+</div>
+    
 <script src="script.js"></script>
 
 </body>
