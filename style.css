@@ -1,83 +1,118 @@
-body {
-    margin: 0;
-    background: #111;
-    color: white;
-    font-family: Arial;
+body{
+margin:0;
+background:#121212;
+color:white;
+font-family:Arial,sans-serif;
+padding-bottom:120px;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 20px;
-    background: #181818;
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+background:#181818;
 }
 
-#search {
-    width: 300px;
-    padding: 10px;
+#search{
+width:300px;
+padding:10px;
+border:none;
+border-radius:8px;
 }
 
-#content {
-    padding: 20px;
+.album{
+width:220px;
+margin:15px;
+display:inline-block;
+cursor:pointer;
 }
 
-.album {
-    display: inline-block;
-    width: 220px;
-    margin: 10px;
-    cursor: pointer;
+.album img{
+width:220px;
+height:220px;
+object-fit:cover;
+border-radius:12px;
 }
 
-.album img {
-    width: 220px;
-    height: 220px;
-    object-fit: cover;
+.track{
+display:flex;
+align-items:center;
+gap:15px;
+padding:10px;
+border-bottom:1px solid #333;
 }
 
-.track {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    padding: 10px;
-    border-bottom: 1px solid #333;
+.track img{
+width:64px;
+height:64px;
+border-radius:8px;
 }
 
-.track img {
-    width: 64px;
-    height: 64px;
+.track-info{
+flex:1;
 }
 
-.track-info {
-    flex: 1;
+.track-title{
+font-size:18px;
 }
 
-.track-title {
-    font-size: 18px;
+.album-link{
+color:#5ca9ff;
+cursor:pointer;
 }
 
-.album-link {
-    color: #4da3ff;
-    cursor: pointer;
+.album-cover-large{
+width:300px;
+border-radius:16px;
 }
 
-#player {
-    position: fixed;
-    bottom: 0;
+#player{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
 
-    width: 100%;
-    background: #181818;
+```
+background:#181818;
 
-    display: flex;
-    align-items: center;
-    gap: 15px;
+display:flex;
+align-items:center;
+gap:15px;
 
-    padding: 10px;
+padding:10px 20px;
+
+border-top:1px solid #333;
+```
+
 }
 
-#playerCover {
-    width: 60px;
-    height: 60px;
+#playerCover{
+width:60px;
+height:60px;
+border-radius:8px;
+object-fit:cover;
+}
+
+#playerInfo{
+min-width:200px;
+}
+
+#currentTrack{
+font-size:15px;
+}
+
+#playerControls{
+display:flex;
+gap:10px;
+}
+
+#playerControls button{
+padding:10px;
+cursor:pointer;
+font-size:18px;
+}
+
+audio{
+flex:1;
 }
