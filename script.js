@@ -1,22 +1,40 @@
-let library;
+let library = [];
+
 let currentAlbums = [];
 
-const content = document.getElementById("content");
+let currentAlbum = null;
+let currentTrackIndex = -1;
 
-fetch("albums.json")
-.then(r => r.json())
-.then(data => {
+const content = document.getElementById("content");
+const audio = document.getElementById("audio");
+
+loadLibrary();
+
+async function loadLibrary() {
+
+    const response =
+        await fetch("albums.json");
+
+    const data =
+        await response.json();
 
     library = data.albums;
     currentAlbums = library;
 
     showAlbums(library);
+}
 
-});
-
-function showAlbums(albums){
+function showAlbums(albums) {
 
     content.innerHTML = "";
+
+    if (albums.length === 0) {
+
+        content.innerHTML =
+            "<h2>Ничего не найдено</h2>";
+
+        return;
+    }
 
     albums.forEach(album => {
 
@@ -32,36 +50,50 @@ function showAlbums(albums){
     });
 }
 
-async function openAlbum(id){
+async function openAlbum(albumId) {
 
     const album =
-        library.find(a => a.id === id);
+        library.find(a => a.id === albumId);
 
-    const desc =
-        await fetch(album.description)
-        .then(r => r.text());
+    let description = "";
+
+    try {
+
+        description =
+            await fetch(album.description)
+            .then(r => r.text());
+
+    } catch {
+
+        description =
+            "Описание отсутствует.";
+
+    }
 
     content.innerHTML = `
         <button onclick="showAlbums(currentAlbums)">
             ← Назад
         </button>
 
-        <img
-            src="${album.cover}"
-            style="width:300px"
-        >
+        <div class="album-page">
 
-        <h1>${album.title}</h1>
+            <img
+                src="${album.cover}"
+                class="album-cover-large">
 
-        <p>${desc}</p>
+            <h1>${album.title}</h1>
 
-        <div id="tracks"></div>
+            <p>${description}</p>
+
+            <div id="tracks"></div>
+
+        </div>
     `;
 
     const tracksDiv =
         document.getElementById("tracks");
 
-    album.tracks.forEach(track => {
+    album.tracks.forEach((track, index) => {
 
         tracksDiv.innerHTML += `
             <div class="track">
@@ -75,23 +107,28 @@ async function openAlbum(id){
                     </div>
 
                     <div
-                      class="album-link"
-                      onclick="openAlbum('${album.id}')">
+                        class="album-link"
+                        onclick="
+                        event.stopPropagation();
+                        openAlbum('${album.id}');
+                        ">
 
-                      ${album.title}
+                        ${album.title}
 
                     </div>
 
                 </div>
 
                 <button
-                  onclick="playTrack(
-                  '${track.file}',
-                  '${track.title}',
-                  '${album.cover}'
-                  )">
+                    onclick="
+                    event.stopPropagation();
+                    playTrack(
+                    '${album.id}',
+                    ${index}
+                    );
+                    ">
 
-                  ▶
+                    ▶
 
                 </button>
 
@@ -100,55 +137,131 @@ async function openAlbum(id){
     });
 }
 
-function playTrack(file, title, cover){
+function playTrack(albumId, trackIndex) {
 
-    const audio =
-        document.getElementById("audio");
+    const album =
+        library.find(a => a.id === albumId);
 
-    audio.src = file;
+    const track =
+        album.tracks[trackIndex];
+
+    currentAlbum = album;
+    currentTrackIndex = trackIndex;
+
+    audio.src = track.file;
 
     document
         .getElementById("currentTrack")
-        .textContent = title;
+        .textContent =
+        track.title;
 
     document
         .getElementById("playerCover")
-        .src = cover;
+        .src =
+        album.cover;
 
     audio.play();
 }
 
+audio.addEventListener("ended", () => {
+
+    if (!currentAlbum)
+        return;
+
+    const nextIndex =
+        currentTrackIndex + 1;
+
+    if (
+        nextIndex <
+        currentAlbum.tracks.length
+    ) {
+
+        playTrack(
+            currentAlbum.id,
+            nextIndex
+        );
+
+        return;
+    }
+
+    playRandomTrack();
+});
+
+function playRandomTrack() {
+
+    const otherAlbums =
+        library.filter(
+            a => a.id !== currentAlbum.id
+        );
+
+    if (otherAlbums.length === 0)
+        return;
+
+    const randomAlbum =
+        otherAlbums[
+            Math.floor(
+                Math.random() *
+                otherAlbums.length
+            )
+        ];
+
+    const randomTrackIndex =
+        Math.floor(
+            Math.random() *
+            randomAlbum.tracks.length
+        );
+
+    playTrack(
+        randomAlbum.id,
+        randomTrackIndex
+    );
+}
+
 document
 .getElementById("search")
-.addEventListener("input", e => {
+.addEventListener(
+    "input",
+    e => {
 
-    const text =
-        e.target.value.toLowerCase();
-
-    const result = [];
-
-    library.forEach(album => {
-
-        if(album.title
+        const query =
+            e.target.value
             .toLowerCase()
-            .includes(text))
-        {
-            result.push(album);
+            .trim();
+
+        if (query === "") {
+
+            currentAlbums =
+                library;
+
+            showAlbums(library);
+
             return;
         }
 
-        const foundTrack =
-            album.tracks.some(track =>
-                track.title
-                .toLowerCase()
-                .includes(text)
-            );
+        const results =
+            library.filter(album => {
 
-        if(foundTrack)
-            result.push(album);
-    });
+                const albumMatch =
+                    album.title
+                    .toLowerCase()
+                    .includes(query);
 
-    currentAlbums = result;
+                const trackMatch =
+                    album.tracks.some(track =>
+                        track.title
+                        .toLowerCase()
+                        .includes(query)
+                    );
 
-    showAlbums(result);
-});
+                return (
+                    albumMatch ||
+                    trackMatch
+                );
+            });
+
+        currentAlbums =
+            results;
+
+        showAlbums(results);
+    }
+);
