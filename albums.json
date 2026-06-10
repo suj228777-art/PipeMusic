@@ -1,1 +1,20 @@
-{ "albums": [ { "id": "zhir", "title": "Жировое Побоище", "cover": "music/zhir/IMG_2238.jpeg", "description": "music/zhir/description.txt", "tracks": [ { "title": "Культ Кайто Припадок Психоза", "file": "music/zhir/kkpp.mp3" }, { "title": "Мечта ДЕДства", "file": "music/zhir/ded.mp3" } ] } ] }
+{
+  "albums": [
+    {
+      "id": "zhir",
+      "title": "Жировое Побоище",
+      "cover": "music/zhir/IMG_2238.jpeg",
+      "description": "music/zhir/description.txt",
+      "tracks": [
+        {
+          "title": "Культ Кайто Припадок Психоза",
+          "file": "music/zhir/kkpp.mp3"
+        },
+        {
+          "title": "Мечта ДЕДства",
+          "file": "music/zhir/ded.mp3"
+        }
+      ]
+    }
+  ]
+}
