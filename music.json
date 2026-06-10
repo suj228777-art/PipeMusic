@@ -1,0 +1,23 @@
+{
+  "albums": [
+    {
+      "id": "album1",
+      "title": "Жировое побоище",
+      "folder": "album1",
+      "cover": "music/zhir/IMG_2238.jpeg",
+      "tracks": [
+        {"title": "Мечта ДЕДства", "file": "music/zhir/ded.mp3"},
+        {"title": "Культ Кайто припадок психоза", "file": "music/zhir/kkpp.mp3"}
+      ]
+    },
+    {
+      "id": "album2",
+      "title": "Тарелка супа и гнилой клубники",
+      "folder": "sup",
+      "cover": "music/album2/cover.jpg",
+      "tracks": [
+        {"title": "Тарелка супа и гнилой клубники", "file": "music/sup/sup.mp3"}
+      ]
+    }
+  ]
+}
