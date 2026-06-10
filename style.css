@@ -1,0 +1,83 @@
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px;
+    background: #181818;
+}
+
+#search {
+    width: 300px;
+    padding: 10px;
+}
+
+#content {
+    padding: 20px;
+}
+
+.album {
+    display: inline-block;
+    width: 220px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.album img {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+}
+
+.track {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.track img {
+    width: 64px;
+    height: 64px;
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-title {
+    font-size: 18px;
+}
+
+.album-link {
+    color: #4da3ff;
+    cursor: pointer;
+}
+
+#player {
+    position: fixed;
+    bottom: 0;
+
+    width: 100%;
+    background: #181818;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 10px;
+}
+
+#playerCover {
+    width: 60px;
+    height: 60px;
+}
