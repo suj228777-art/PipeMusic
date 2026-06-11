@@ -1,345 +1,264 @@
-let library = [];
-let currentAlbums = [];
-
+let musicData = { albums: [] };
 let currentAlbum = null;
 let currentTrackIndex = -1;
+let isRandomMode = false;
+let allTracksGlobal = []; // Для рандомного режима
 
-const content = document.getElementById("content");
-const audio = document.getElementById("audio");
+const audio = document.getElementById('main-audio');
+const playBtn = document.getElementById('play-btn');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const progressBar = document.getElementById('progress-bar');
+const currentTimeEl = document.getElementById('current-time');
+const totalTimeEl = document.getElementById('total-time');
 
-fetch("albums.json")
-.then(r => r.json())
-.then(data => {
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('music.json')
+        .then(res => res.json())
+        .then(data => {
+            musicData = data;
+            buildGlobalTrackList();
+            renderAlbums();
+        });
 
-```
-library = data.albums;
-currentAlbums = library;
-
-showAlbums(library);
-```
-
+    setupEventListeners();
 });
 
-function showAlbums(albums){
-
-```
-content.innerHTML = "";
-
-albums.forEach(album => {
-
-    content.innerHTML += `
-    <div
-        class="album"
-        onclick="openAlbum('${album.id}')"
-    >
-
-        <img src="${album.cover}">
-        <h3>${album.title}</h3>
-
-    </div>
-    `;
-});
-```
-
+// Собираем плоский список вообще всех треков для режима перемешивания
+function buildGlobalTrackList() {
+    allTracksGlobal = [];
+    musicData.albums.forEach(album => {
+        album.tracks.forEach((track, index) => {
+            allTracksGlobal.push({
+                ...track,
+                albumId: album.id,
+                albumTitle: album.title,
+                albumCover: album.cover,
+                indexInAlbum: index
+            });
+        });
+    });
 }
 
-async function openAlbum(id){
-
-```
-const album =
-    library.find(a => a.id === id);
-
-const description =
-    await fetch(album.description)
-    .then(r => r.text());
-
-content.innerHTML = `
-    <button onclick="showAlbums(currentAlbums)">
-        ← Назад
-    </button>
-
-    <div class="album-page">
-
-        <img
-            src="${album.cover}"
-            class="album-cover-large"
-        >
-
-        <h1>${album.title}</h1>
-
-        <p>${description}</p>
-
-        <div id="tracks"></div>
-
-    </div>
-`;
-
-const tracksDiv =
-    document.getElementById("tracks");
-
-album.tracks.forEach((track,index)=>{
-
-    tracksDiv.innerHTML += `
-    <div class="track">
-
-        <img src="${album.cover}">
-
-        <div class="track-info">
-
-            <div class="track-title">
-                ${track.title}
-            </div>
-
-            <div
-                class="album-link"
-                onclick="
-                event.stopPropagation();
-                openAlbum('${album.id}')
-                "
-            >
-                ${album.title}
-            </div>
-
-        </div>
-
-        <button
-            onclick="
-            playTrack(
-            '${album.id}',
-            ${index}
-            )
-            "
-        >
-            ▶
-        </button>
-
-    </div>
-    `;
-
-});
-```
-
-}
-
-function playTrack(albumId, trackIndex){
-
-```
-const album =
-    library.find(a => a.id === albumId);
-
-if(!album) return;
-
-const track =
-    album.tracks[trackIndex];
-
-currentAlbum = album;
-currentTrackIndex = trackIndex;
-
-audio.src = track.file;
-
-document
-    .getElementById("currentTrack")
-    .textContent =
-    track.title;
-
-document
-    .getElementById("playerCover")
-    .src =
-    album.cover;
-
-audio.play();
-```
-
-}
-
-function nextTrack(){
-
-```
-if(!currentAlbum) return;
-
-const next =
-    currentTrackIndex + 1;
-
-if(next < currentAlbum.tracks.length){
-
-    playTrack(
-        currentAlbum.id,
-        next
-    );
-
-    return;
-}
-
-playRandomTrack();
-```
-
-}
-
-function previousTrack(){
-
-```
-if(!currentAlbum) return;
-
-const prev =
-    currentTrackIndex - 1;
-
-if(prev >= 0){
-
-    playTrack(
-        currentAlbum.id,
-        prev
-    );
-
-}
-```
-
-}
-
-function playRandomTrack(){
-
-```
-const otherAlbums =
-    library.filter(
-        album =>
-        album.id !== currentAlbum.id
-    );
-
-if(otherAlbums.length === 0)
-    return;
-
-const randomAlbum =
-    otherAlbums[
-        Math.floor(
-            Math.random()
-            *
-            otherAlbums.length
-        )
-    ];
-
-const randomTrack =
-    Math.floor(
-        Math.random()
-        *
-        randomAlbum.tracks.length
-    );
-
-playTrack(
-    randomAlbum.id,
-    randomTrack
-);
-```
-
-}
-
-audio.addEventListener(
-"ended",
-nextTrack
-);
-
-document
-.getElementById("search")
-.addEventListener(
-"input",
-e => {
-
-```
-const text =
-    e.target.value
-    .toLowerCase()
-    .trim();
-
-if(text === ""){
-
-    showAlbums(library);
-
-    return;
-
-}
-
-let html = "";
-
-library.forEach(album=>{
-
-    if(
-        album.title
-        .toLowerCase()
-        .includes(text)
-    ){
-
-        html += `
-        <div
-            class="album"
-            onclick="
-            openAlbum('${album.id}')
-            "
-        >
-
-            <img src="${album.cover}">
+// Отображение главной страницы альбомов
+function renderAlbums() {
+    const grid = document.getElementById('albums-grid');
+    grid.innerHTML = '';
+    musicData.albums.forEach(album => {
+        const card = document.createElement('div');
+        card.className = 'album-card';
+        card.innerHTML = `
+            <img src="${album.cover}" alt="${album.title}">
             <h3>${album.title}</h3>
-
-        </div>
         `;
+        card.addEventListener('click', () => openAlbum(album.id));
+        grid.appendChild(card);
+    });
+}
 
+// Открытие альбома
+async function openAlbum(albumId) {
+    currentAlbum = musicData.albums.find(a => a.id === albumId);
+    isRandomMode = false;
+
+    document.getElementById('albums-grid').classList.add('hidden');
+    document.getElementById('album-view').classList.remove('hidden');
+
+    document.getElementById('album-cover').src = currentAlbum.cover;
+    document.getElementById('album-title').textContent = currentAlbum.title;
+    
+    // Пытаемся загрузить описание из txt
+    const descEl = document.getElementById('album-desc');
+    try {
+        const response = await fetch(`music/${currentAlbum.folder}/description.txt`);
+        descEl.textContent = response.ok ? await response.text() : "Описание отсутствует.";
+    } catch {
+        descEl.textContent = "Описание отсутствует.";
     }
 
-    album.tracks.forEach(
-    (track,index)=>{
-
-        if(
-            track.title
-            .toLowerCase()
-            .includes(text)
-        ){
-
-            html += `
-            <div class="track">
-
-                <img
-                src="${album.cover}"
-                >
-
-                <div
-                class="track-info"
-                >
-
-                    <div>
-                        ${track.title}
-                    </div>
-
-                    <div
-                    class="album-link"
-                    onclick="
-                    openAlbum(
-                    '${album.id}'
-                    )
-                    "
-                    >
-                        ${album.title}
-                    </div>
-
-                </div>
-
-                <button
-                onclick="
-                playTrack(
-                '${album.id}',
-                ${index}
-                )
-                "
-                >
-                ▶
-                </button>
-
+    // Рендерим треклист
+    const list = document.getElementById('track-list');
+    list.innerHTML = '';
+    currentAlbum.tracks.forEach((track, index) => {
+        const li = document.createElement('li');
+        li.className = `track-item ${currentTrackIndex === index && !isRandomMode ? 'active' : ''}`;
+        li.innerHTML = `
+            <div>
+                <div>${track.title}</div>
+                <small style="color: var(--text-muted)">${currentAlbum.title}</small>
             </div>
-            `;
+            <i class="fas fa-play" style="align-self: center;"></i>
+        `;
+        li.addEventListener('click', () => playTrack(index));
+        list.appendChild(li);
+    });
+}
 
+// Воспроизведение трека из текущего альбома
+function playTrack(index) {
+    if (!currentAlbum) return;
+    isRandomMode = false;
+    currentTrackIndex = index;
+    const track = currentAlbum.tracks[index];
+
+    loadAndPlay(track.title, currentAlbum.title, currentAlbum.cover, track.file);
+    highlightActiveTrack();
+}
+
+// Общая функция загрузки трека в аудиоэлемент
+function loadAndPlay(title, albumTitle, cover, src) {
+    audio.src = src;
+    document.getElementById('player-title').textContent = title;
+    document.getElementById('player-album').textContent = albumTitle;
+    document.getElementById('player-cover').src = cover;
+    
+    audio.play();
+    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+}
+
+// Переключение треков
+function nextTrack() {
+    if (isRandomMode) {
+        playRandomTrack();
+    } else if (currentAlbum) {
+        if (currentTrackIndex < currentAlbum.tracks.length - 1) {
+            playTrack(currentTrackIndex + 1);
+        } else {
+            // Альбом закончился -> включаем случайный трек из всей базы
+            playRandomTrack();
         }
+    }
+}
 
+function prevTrack() {
+    if (!isRandomMode && currentTrackIndex > 0) {
+        playTrack(currentTrackIndex - 1);
+    }
+}
+
+// Включение абсолютно случайного трека
+function playRandomTrack() {
+    if (allTracksGlobal.length === 0) return;
+    isRandomMode = true;
+    
+    const randomIndex = Math.floor(Math.random() * allTracksGlobal.length);
+    const track = allTracksGlobal[randomIndex];
+    
+    // Переопределяем текущий индекс и альбом на случай, если захотим переключаться дальше
+    currentAlbum = musicData.albums.find(a => a.id === track.albumId);
+    currentTrackIndex = track.indexInAlbum;
+
+    loadAndPlay(track.title, track.albumTitle, track.albumCover, track.file);
+    highlightActiveTrack();
+}
+
+// Подсветка играющего трека на странице альбома
+function highlightActiveTrack() {
+    document.querySelectorAll('.track-item').forEach((item, idx) => {
+        if (idx === currentTrackIndex && !isRandomMode) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// Логика работы событий кнопок плеера
+function setupEventListeners() {
+    // Логотип ведет на главную
+    document.getElementById('logo').addEventListener('click', () => {
+        document.getElementById('album-view').classList.add('hidden');
+        document.getElementById('albums-grid').classList.remove('hidden');
     });
 
-});
+    document.getElementById('back-btn').addEventListener('click', () => {
+        document.getElementById('logo').click();
+    });
 
-content.innerHTML = html;
-```
+    // Кнопка плей/пауза
+    playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            audio.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    });
 
-});
+    nextBtn.addEventListener('click', nextTrack);
+    prevBtn.addEventListener('click', prevTrack);
+    audio.addEventListener('ended', nextTrack); // Автовоспроизведение дальше
+
+    // Слушать рандом на главной
+    document.getElementById('random-mode-btn').addEventListener('click', playRandomTrack);
+
+    // Логика кастомной полосы перемотки
+    audio.addEventListener('timeupdate', () => {
+        if (!isNaN(audio.duration)) {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progress;
+            currentTimeEl.textContent = formatTime(audio.currentTime);
+            totalTimeEl.textContent = formatTime(audio.duration);
+        }
+    });
+
+    progressBar.addEventListener('input', () => {
+        const time = (progressBar.value / 100) * audio.duration;
+        audio.currentTime = time;
+    });
+
+    // Поиск
+    const searchToggle = document.getElementById('search-toggle-btn');
+    const searchBar = document.getElementById('search-bar');
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    searchToggle.addEventListener('click', () => {
+        searchBar.classList.toggle('hidden');
+        if (!searchBar.classList.contains('hidden')) searchInput.focus();
+    });
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+        if (!query) return;
+
+        // Ищем по альбомам
+        musicData.albums.forEach(album => {
+            if (album.title.toLowerCase().includes(query)) {
+                const div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerHTML = `<strong>Альбом:</strong> ${album.title}`;
+                div.addEventListener('click', () => {
+                    openAlbum(album.id);
+                    searchBar.classList.add('hidden');
+                });
+                searchResults.appendChild(div);
+            }
+        });
+
+        // Ищем по трекам
+        allTracksGlobal.forEach(track => {
+            if (track.title.toLowerCase().includes(query)) {
+                const div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerHTML = `<strong>Трек:</strong> ${track.title} — <small>${track.albumTitle}</small>`;
+                div.addEventListener('click', () => {
+                    openAlbum(track.albumId).then(() => {
+                        playTrack(track.indexInAlbum);
+                    });
+                    searchBar.classList.add('hidden');
+                });
+                searchResults.appendChild(div);
+            }
+        });
+    });
+}
+
+function formatTime(secs) {
+    const minutes = Math.floor(secs / 60);
+    const seconds = Math.floor(secs % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
