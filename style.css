@@ -1,118 +1,141 @@
-body{
-margin:0;
-background:#121212;
-color:white;
-font-family:Arial,sans-serif;
-padding-bottom:120px;
+:root {
+    --bg-color: #121212;
+    --panel-color: #181818;
+    --accent-color: #1db954;
+    --text-color: #ffffff;
+    --text-muted: #b3b3b3;
 }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px;
-background:#181818;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding-bottom: 100px; /* Чтобы плеер не перекрывал контент */
 }
 
-#search{
-width:300px;
-padding:10px;
-border:none;
-border-radius:8px;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--panel-color);
 }
 
-.album{
-width:220px;
-margin:15px;
-display:inline-block;
-cursor:pointer;
+#logo { cursor: pointer; margin: 0; font-size: 24px; color: var(--accent-color); }
+
+.btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.album img{
-width:220px;
-height:220px;
-object-fit:cover;
-border-radius:12px;
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 15px;
 }
 
-.track{
-display:flex;
-align-items:center;
-gap:15px;
-padding:10px;
-border-bottom:1px solid #333;
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
-.track img{
-width:64px;
-height:64px;
-border-radius:8px;
+/* Поиск */
+.search-bar {
+    padding: 15px 20px;
+    background: #282828;
+}
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    background: #3e3e3e;
+    border: none;
+    color: white;
+    border-radius: 4px;
+}
+.search-results {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.search-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+.search-item:hover { background: #333; }
+
+/* Сетка альбомов */
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
-.track-info{
-flex:1;
+.album-card {
+    background: var(--panel-color);
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.album-card:hover { background: #282828; }
+.album-card img { width: 100%; border-radius: 4px; aspect-ratio: 1; object-fit: cover; }
+.album-card h3 { margin: 10px 0 5px 0; font-size: 16px; }
+
+/* Страница альбома */
+.album-view { padding: 20px; }
+.album-header { display: flex; gap: 20px; margin-bottom: 30px; }
+.album-header img { width: 200px; height: 200px; border-radius: 8px; object-fit: cover; }
+.album-desc { color: var(--text-muted); white-space: pre-line; }
+
+.track-list { list-style: none; padding: 0; }
+.track-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.track-item:hover { background: rgba(255,255,255,0.1); }
+.track-item.active { color: var(--accent-color); }
+
+/* Плеер */
+.audio-player {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 90px;
+    background: #181818;
+    border-top: 1px solid #282828;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
 }
 
-.track-title{
-font-size:18px;
-}
+.player-track-info { display: flex; align-items: center; gap: 15px; width: 30%; }
+.player-track-info img { width: 56px; height: 56px; border-radius: 4px; object-fit: cover; }
+#player-album { font-size: 12px; color: var(--text-muted); }
 
-.album-link{
-color:#5ca9ff;
-cursor:pointer;
-}
+.player-controls { display: flex; align-items: center; gap: 20px; }
+.control-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; }
+.play-main { font-size: 28px; color: var(--accent-color); }
 
-.album-cover-large{
-width:300px;
-border-radius:16px;
-}
+.player-progress { display: flex; align-items: center; gap: 10px; width: 30%; }
+.player-progress input { flex-grow: 1; accent-color: var(--accent-color); }
 
-#player{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-
-```
-background:#181818;
-
-display:flex;
-align-items:center;
-gap:15px;
-
-padding:10px 20px;
-
-border-top:1px solid #333;
-```
-
-}
-
-#playerCover{
-width:60px;
-height:60px;
-border-radius:8px;
-object-fit:cover;
-}
-
-#playerInfo{
-min-width:200px;
-}
-
-#currentTrack{
-font-size:15px;
-}
-
-#playerControls{
-display:flex;
-gap:10px;
-}
-
-#playerControls button{
-padding:10px;
-cursor:pointer;
-font-size:18px;
-}
-
-audio{
-flex:1;
-}
+.hidden { display: none !important; }
