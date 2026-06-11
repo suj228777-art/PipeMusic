@@ -8,7 +8,13 @@
       "tracks": [
         {"title": "Мечта ДЕДства", "file": "music/zhir/ded.mp3"},
         {"title": "Культ Кайто припадок психоза", "file": "music/zhir/kkpp.mp3"},
-        {"title": "Куриная залупка", "file": "music/zhir/kz.mp3"}
+        {"title": "Куриная залупка", "file": "music/zhir/kz.mp3"},
+        {"title": "Мужчиной быть не круто !", "file": "music/zhir/antim.mp3"},
+        {"title": "Догнала свинья", "file": "music/zhir/ds.mp3"},
+        {"title": "Ышкырдыбыг", "file": "music/zhir/ish.mp3"},
+        {"title": "Пакет и Бабка", "file": "music/zhir/pandb.mp3"},
+        {"title": "Тупа  Я ЖЕНЩИНА", "file": "music/zhir/tyazh.mp3"},
+        {"title": "Жирная смерть", "file": "music/zhir/pandb.mp3"}
       ]
     },
     {
