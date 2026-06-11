@@ -14,7 +14,7 @@
       "id": "album2",
       "title": "Тарелка супа и гнилой клубники",
       "folder": "sup",
-      "cover": "music/album2/cover.jpg",
+      "cover": "music/sup/cover.jpg",
       "tracks": [
         {"title": "Тарелка супа и гнилой клубники", "file": "music/sup/sup.mp3"}
       ]
