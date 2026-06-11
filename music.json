@@ -7,7 +7,8 @@
       "cover": "music/zhir/IMG_2238.jpeg",
       "tracks": [
         {"title": "Мечта ДЕДства", "file": "music/zhir/ded.mp3"},
-        {"title": "Культ Кайто припадок психоза", "file": "music/zhir/kkpp.mp3"}
+        {"title": "Культ Кайто припадок психоза", "file": "music/zhir/kkpp.mp3"},
+        {"title": "Куриная залупка", "file": "music/zhir/kz.m4a"}
       ]
     },
     {
